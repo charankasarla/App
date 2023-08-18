@@ -1,0 +1,8 @@
+{% extends 'main/index.html'%}
+{% block body %}
+<ul>
+    {% for item in inventory%}
+    <p>{{item}}</p>
+    {%endfor%}
+</ul>
+{% endblock %}

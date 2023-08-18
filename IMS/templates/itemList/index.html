@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <style>
+        body{
+            background-color: skyblue;
+            
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-footer {
+            background-color: white;
+            border-top: none;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Item List</h1>
+        <div class="row">
+            {% for item in items %}
+                <div class="col-md-4">
+                    <div class="card" id="card_{{ item.id }}">
+                        <div class="card-body">
+                            <h5 class="card-title">Name:{{ item.name }}</h5>
+                            <p class="card-text">Cost: {{ item.selling_price }}</p>
+                            <p class="card-text">Quantity: {{ item.quantity }}</p>
+                            <p class="card-text">Id: {{ item.id }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a  class="btn btn-info" href = "{% url 'itemDetails' item.id%}">View</a>
+                            <a href = "{% url 'editItem' item.id %}" class="btn btn-warning">Edit</a>
+                            <a  href = "{% url 'sellItem' item.id%}" class="btn btn-success">Sell</a>
+                            <a  href = "{% url 'createOrders' item.id%}" class="btn btn-success">Order</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class = "text-center">
+            <a href="{% url 'createNewItem' %}" class="btn btn-primary m-4 ">Add Item</a>
+        </div>
+    </div>
+</body>
+</html>
