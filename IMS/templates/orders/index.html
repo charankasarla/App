@@ -1,0 +1,88 @@
+{% extends 'main/ss.html'%}
+{% block css%}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-date {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .order-quantity {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .order-cost {
+            font-size: 14px;
+            color: #333;
+        }
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <h1>Orders {{ context }} for Item</h1>
+        <ul>
+            {% for order in orders %}
+            <li>
+            <a href = "{% url 'ordersDetails' order.id %}">
+                {% if order.is_received == True %}
+                    <div class="order-details">
+                        <div class="order-date text-success">{{ order.orderdttm }}</div>
+                        <div class="order-quantity text-success">Quantity: {{ order.quantity }}</div>
+                        <div class="order-cost text-success">Cost: {{ order.cost }}</div>
+                    </div>
+                {% elif order.is_cancel == True %}
+                    <div class="order-details">
+                        <div class="order-date text-danger">{{ order.orderdttm }}</div>
+                        <div class="order-quantity text-danger">Quantity: {{ order.quantity }}</div>
+                        <div class="order-cost text-danger">Cost: {{ order.cost }}</div>
+                    </div>
+                {% else %}
+                    <div class="order-details">
+                        <div class="order-date text-secondary">{{ order.orderdttm }}</div>
+                        <div class="order-quantity text-secondary">Quantity: {{ order.quantity }}</div>
+                        <div class="order-cost text-secondary">Cost: {{ order.cost }}</div>
+                    </div>
+                {% endif %}
+            </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

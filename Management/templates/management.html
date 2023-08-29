@@ -1,0 +1,498 @@
+{% load static %}
+{% load seconds_to_hm %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet"  href="{% static 'management.css' %}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+        <!-- Include ApexCharts library -->
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+
+        <!-- Include ApexCharts CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@latest/dist/apexcharts.min.css">
+  
+
+    </head>
+    <body>
+        <div class="nav-bar" style = "height:7vh">
+            <div class="left">
+            <div class="menu-icon"><img src="{% static 'menu-icon.png' %}" /></div>
+            <div class="logo"><img src="{% static 'image 5.png' %}"/></div>
+            <div class="title">Management Live</div>
+            </div>
+            
+            <div class="right" style="background-image: url('{% static "right-bg.png" %}'); color:white;">
+                <div class="avatar">AB</div>
+                <div class="admissions"><span><img src="{% static 'admissions-icon.png' %}"/></span>Admissions</div>
+                <div class="home"><span><img src="{% static 'home-icon.png' %}"/></span>Home</div>
+            </div>
+         
+        </div>
+        
+        <div class="body-section" style = "height:100vh;">
+            <div class="side-navigation" style="width:50px; height:100vh; background: linear-gradient(148deg, #8B4367 0%, #343571 100%)";>
+                <img style="margin: 15px; margin-top: 20px;" src="{% static 'search.png' %}" />
+                <img style="margin: 15px;" src="{% static 'funnel-icon.png' %}" />
+                <img style="margin: 10px;" src="{% static 'token-icon.png' %}" />
+                <img style="margin: 10px;" src="{% static 'ambulance1.png' %}" />
+                <img style="margin: 10px; background-color:white;" src="{% static 'ambulance2.png' %}" />
+                <img style="margin: 10px;" src="{% static 'OP1.png' %}" />
+                <img style="margin: 10px; background-color:white;" src="{% static 'OP2.png' %}" />
+                <img style="margin: 10px;" src="{% static 'hospital1.png' %}" />
+                <img style="margin: 10px;" src="{% static 'milestone1.png' %}" />
+                <img style="margin: 10px;" src="{% static 'globe.png' %}" />
+                <img style="margin: 10px;" src="{% static 'milestone2.png' %}" />
+                <img style="margin: 10px;" src="{% static 'journey1.png' %}" />
+                <img style="margin: 15px;" src="{% static 'chart1.png' %}" />
+            </div>
+        
+        <div class="key-metrics">
+            <div class="metrics-title">Key Metrics</div>
+            <div class="metrics-child">
+                <div class="title-name">Queue to Registration</div>
+                <div class="main-title">Registration Time</div>
+                <div class="time"> <img src="{% static 'clock.png' %}"/>
+                    <span>
+                        {% if key_metrics.registration.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.registration.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.registration.time %}</span>{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="metrics-child">
+                <div class="title-name">Registration to Triage</div>
+                <div class="main-title">Time to Triage</div>
+                <div class="time"> <img src="{% static 'clock.png' %}"/>
+                    {% if key_metrics.triage_done.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.triage_done.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.triage_done.time %}</span>{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="metrics-child">
+                <div class="title-name"> Triage to consult</div>
+                <div class="main-title">Time to Consult</div>
+                <div class="time"> <img src="{% static 'clock.png' %}"/>
+                    {% if key_metrics.cons_done.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.cons_done.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.cons_done.time %}</span>{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="metrics-child">
+                <div class="title-name"> Triage End to Discharge</div>
+                <div class="main-title">In zone time</div>
+                <div class="time"> <img src="{% static 'clock.png' %}" />
+                    {% if key_metrics.in_zone.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.in_zone.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.in_zone.time %}</span>{% endif %}</span>
+                </div>
+            </div>
+
+            <div class="metrics-child">
+                <div class="title-name"> Consultation to Discharge</div>
+                <div class="main-title">Treatment time</div>
+                <div class="time"> <img src="{% static 'clock.png' %}" />{% if key_metrics.treatment.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.treatment.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.treatment.time %}</span>{% endif %}</span>
+                </div>
+            </div>
+
+            <div class="metrics-child">
+                <div class="title-name"> Lab Order Request to Processing</div>
+                <div class="main-title">Lab Processing Time</div>
+                <div class="time" style = "color:red;"> <img src="{% static 'clock.png' %}" style="color:red;"/>02:34</span>
+                </div>
+            </div>
+
+            
+            <div class="metrics-child">
+                <div class="title-name"> Radiology Order Request to Processing</div>
+                <div class="main-title">Radiology Processing Time</div>
+                <div class="time" style = "color:red;"> <img src="{% static 'clock.png' %}" style="color:red;"/>02:34</span>
+                </div>
+            </div>
+            <div class="metrics-child">
+                <div class="title-name"> UCC Discharge to IP Bed Allotment</div>
+                <div class="main-title">IP Transfers <img src="{% static 'pateint.png'%}" style="margin-left: 80px;" />{{ key_metrics.ip_transfers.completed.count }}</div>
+                <div class="time" > <img src="{% static 'clock.png' %}"/>
+                    {% if key_metrics.ip_transfers.completed.time > kpi__ %}<span style = "color:red;">{% seconds_to_hm key_metrics.ip_transfers.completed.time %}</span>{%else%}<span style = "color:green;">{% seconds_to_hm key_metrics.ip_transfers.completed.time %}</span>{% endif %}</span>
+                </div>
+            </div>
+            <div class="visits" >
+                <div style="margin-left: 40px;">
+                   <p class = "total-para"style="">Total visits<p>
+                   <div class = "total-visits-count"style=""><p class = "count-para"style="">{{key_metrics.total.count}}</p></div>
+                </div>
+
+                <div style="margin-left: 100px;">
+                    <p style="margin-left: 40px;margin-top: 6px; color:white; font-weight:bold;">visit time</p>
+                    <p style="margin-top: -20px; font-size: 12px; color:white;">Registration to discharge</p>
+                    <div class = "total-visits-count" style = "background-color:white;" >{% if completed.avg_act_tm > kpi__%}<p  class = "count-para" > {% seconds_to_hm completed.avg_act_tm %} </p> {% else %}<p style="text-align: center;line-height: 50px; font-size: 30px; font-weight:bold; color:green;"> {% seconds_to_hm completed.avg_act_tm %} </p>{% endif %}</div>
+                </div>
+            </div>
+
+            <div class="finance">
+                <div class = "finance-div">   
+                    <div style = "color:#6F3652;"><img src = "{% static 'insurance.png'%}" />Insurance</div> 
+                    <div  class = "finance-div-1"style="">
+                    <div style="color:#6F3652; position:relative;  bottom:0;"><span style = "color:#6F3652; position:relative;  bottom:0;">{{ completed.Payor.Insurance.count }}</span></div>
+                    <div ><img src="{% static 'clock.png' %}" style=" margin-right: 10px; align-self:flex-end; margin-left: 20px; height: 20px; width: 20px;"/> {% if completed.Payor.Insurance.time > kpi__%}<span style = "color:red;">{% seconds_to_hm completed.Payor.Insurance.time %}</span>{% else %}<span style = "color:green;">{% seconds_to_hm completed.Payor.Insurance.time %}</span>{% endif %}</div>
+                    </div>
+                </div>
+                <div class = "finance-div">   
+                    <div style = "color:Plum;"> <img src = "{% static 'selfpay.png' %}">Self Pay</div> 
+                    <div class = "finance-div-1">
+                    <div style="color:Plum;"><span>{{ completed.Payor.Self_Pay.count }} </div>
+                    <div style="color:#FF6464B2" ><img src="{% static 'clock.png' %}"class = "finance-count" style=""/>{% if completed.Payor.Self_Pay.time > kpi__%}<span style = "color:red;">{% seconds_to_hm completed.Payor.Self_Pay.time %}</span>{% else %}<span style = "color:green;">{% seconds_to_hm completed.Payor.Self_Pay.time%}</span> {% endif %}</div>
+                    </div>
+                </div>
+
+                <div class = "finance-div">   
+                    <div style = "color:Navy;"> <img src = "{% static 'international.png' %}">International</div> 
+                    <div class = "finance-div-1">
+                    <div style="color:Navy; ">{{ completed.Residency.International.count }}</div>
+                    <div style="color:#FF6464B2" ><img src="{% static 'clock.png' %}" class = 'finance-count'/>{% if completed.Residency.International.time > kpi__%}<span style = "color:red;">{% seconds_to_hm completed.Residency.International.time %}</span>{% else %}<span style = "color:green;">{% seconds_to_hm completed.Residency.International.time %}</span> {% endif %}</div>
+                    </div>
+                </div>
+                <div class = "finance-div">   
+                    <div style = "color:text"><img src = "{% static 'local.png' %}"/>Local</div> 
+                    <div class = "finance-div-1">
+                    <div style="color:grey;">{{completed.Residency.Local.count}}</div>
+                    <div style="" ><img src="{% static 'clock.png' %}" class = "finance-count"/>{% if completed.Residency.Local.time > kpi__%}<span style = "color:red;">{% seconds_to_hm completed.Residency.Local.time %}</span>{% else %}<span style = "color:green;">{% seconds_to_hm completed.Residency.Local.time %}</span> {% endif %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="row-1">
+                <div class="zone-table">
+
+                    <table class="zone-stats">
+                        <thead class="style-1">
+                            <tr class="style-2">
+                                <th rowspan="2" class="style-3">Zone Statistic</th>
+                                <th class="style-4">Green Zone</th>
+                                <th class="style-5">Yellow Zone</th>
+                                <th class="style-6">Red Zone</th>
+                            </tr>
+                        </thead>
+                        <tbody class="style-7">
+                            <tr class="style-8">
+                                <td rowspan="2" class="style-9">
+                                    <img class="style-10" src="{% static 'visits.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-11"> Total Visits</div>
+                                </td>
+                                <td class="style-12">{{ zonestats.green.total_visits_count }}</td>
+                                <td class="style-13">{{ zonestats.yellow.total_visits_count }}</td>
+                                <td class="style-14">{{ zonestats.red.total_visits_count }}</td>
+                            </tr>
+                            <tr class="style-8">
+                                <td rowspan="2" class="style-9">
+                                    <img class="style-10" src="{% static 'active.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-11"> Active</div>
+                                </td>
+                                <td class="style-12">{{zonestats.green.active_count}}</td>
+                                <td class="style-13">{{zonestats.yellow.active_count}}</td>
+                                <td class="style-14">{{zonestats.red.total_visits_count}}</td>
+                            </tr>
+    
+                            <tr class="style-8">
+                                <td rowspan="2" class="style-9">
+                                    <img class="style-10" src="{% static 'discharge.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-11"> Discharged</div>
+                                </td>
+                                <td class="style-12">{{zonestats.green.discharge_count}}</td>
+                                <td class="style-13">{{zonestats.yellow.discharge_count}}</td>
+                                <td class="style-14">{{zonestats.red.discharge_count}}</td>
+                            </tr>
+    
+                            <tr class="style-15">
+                                <td rowspan="2" class="style-16">
+                                    <img class="style-17" src="{% static 'triagetime.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-18"> Average Triage Time</div>
+                                </td>
+                                <td class="style-19">
+                    
+                                    <div rowspan="2" class="style-20">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-21"></i> <span class="style-22"> {% if zonestats.green.avg_triage_tm > kpi__%}<span style = "color:red;">{% seconds_to_hm zonestats.green.avg_triage_tm  %}</span> {%else%}<span style = "color:green;">{% seconds_to_hm zonestats.green.avg_triage_tm%}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-23">
+                    
+                                    <div rowspan="2" class="style-24">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-25"></i> <span class="style-26">{% if zonestats.yellow.avg_triage_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.yellow.avg_triage_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.yellow.avg_triage_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-27">
+                    
+                                    <div rowspan="2" class="style-28">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-29"></i> <span class="style-44">{% if zonestats.red.avg_triage_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.red.avg_triage_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.red.avg_triage_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                            </tr>
+    
+                            <tr class="style-15">
+                                <td rowspan="2" class="style-16">
+                                    <img class="style-17" src="{% static 'holdtime.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-18"> Average Zone Time</div>
+                                </td>
+                                <td class="style-19">
+                    
+                                    <div rowspan="2" class="style-20">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-21"></i> <span class="style-22"> {% if zonestats.green.avg_triage_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.green.avg_triage_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.green.avg_triage_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-23">
+                    
+                                    <div rowspan="2" class="style-24">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-25"></i> <span class="style-26"> {% if zonestats.yellow.avg_triage_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.yellow.avg_triage_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.yellow.avg_triage_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-27">
+                    
+                                    <div rowspan="2" class="style-28">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-29"></i> <span class="style-44">{% if zonestats.red.avg_triage_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.red.avg_triage_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.red.avg_triage_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                            </tr>
+    
+                            <tr class="style-15">
+                                <td rowspan="2" class="style-16">
+                                    <img class="style-17" src="{% static 'visits.png' %}" width="24px" height="24px" alt="" srcset="" />
+                                    <div class="style-18"> Visit Time</div>
+                                </td>
+                                <td class="style-19">
+                    
+                                    <div rowspan="2" class="style-20">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-21"></i> <span class="style-22"> {% if zonestats.green.avg_visit_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.green.avg_visit_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.green.avg_visit_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-23">
+                    
+                                    <div rowspan="2" class="style-24">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-25"></i> <span class="style-26"> {% if zonestats.yellow.avg_visit_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.yellow.avg_visit_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.yellow.avg_visit_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="style-27">
+                    
+                                    <div rowspan="2" class="style-28">
+                                        <img src="{% static 'clock.png' %}" width="18px" height="18px" alt=""  /> 
+                                        <i class="style-29"></i> <span class="style-44">{% if zonestats.red.avg_visit_tm > kpi__ %} <span style = "color:red;">{% seconds_to_hm zonestats.red.avg_visit_tm  %}</span>{% else%}<span style = "color:green;">{% seconds_to_hm zonestats.red.avg_visit_tm  %}</span>{% endif %}</span>
+                                    </div>
+                                </td>
+                            </tr>
+    
+                        </tbody>
+    
+                    </table>
+                    
+                </div>
+                
+                <div class="triage-by-interval" id="chart-1">Triage By <span style = "color:red">Interval</span></div>
+            </div>
+
+            <div class="row-2" style= "height: auto; display: flex;">
+                
+                              
+                <div class="triage-by-zone " id="chart-2" >Triage By <span style = "color:red">Zone</span></div>
+                <div class="patients-by-interval" id="chart-3" >Patients By <span style = "color:red">Interval</span></div>
+               
+                <div class="patients-by-doctor" id="chart-4">Patients By <span style = "color:red">Doctors</span></div>
+
+            </div>
+            <div class="row-3" >
+               
+                <div class="waiting-status">
+                    <div style="font-size: 30px;">Current</div>     
+                    <div style="font-size: 20px; color:#FF6464;">Waiting Status</div>
+                    <img src="{% static 'waiting.png' %}" style="width: 140px; height: 150px; margin-top: 15px;" />
+                </div>
+               
+                <div class="For" >
+                    <div>
+                    <div class = "For-div-1"><span style = "font-size:18px;"><img src = "{% static 'fortriage.png' %}"/>For</span>Triage</div>
+                    <div style="display: flex;align-items: center;background-color: aliceblue;height: 120px;">
+                        <div style=""><img src="{% static 'pateint.png' %}" style=" margin-right: 10px;height: 20px; width: 20px;"/>{{inprogress.pdTriage.count}}	</div>
+                        <div style="font-size: 30px; font-weight: bold; " ><img src="{% static 'clock.png' %}" style=" margin-right: 10px; margin-left: 20px; height: 20px; width: 20px;"/>{% if inprogress.pdTriage.time > kpi__%}<span style = "color:green;">{% seconds_to_hm inprogress.pdTriage.time %}</span>{%else%}<span style = "color:red;">{% seconds_to_hm inprogress.pdTriage.time %}</span> {% endif %}</div>
+                      
+                    </div>
+                    </div>
+    
+                    <div>
+                    <div class = "For-div-1"><span style = "font-size:18px"><img src = "{% static 'consultation.png' %}"/>For</span>Consultation</div>
+                    <div style="display: flex;align-items: center;background-color: aliceblue;height: 120px;">
+                        <div style="font-size: 30px; font-weight: bold; margin-left: 35px;"><img src="{% static 'pateint.png' %}" style=" margin-right: 10px;height: 30px; width: 30px;"/>{{inprogress.pdConsultation.count}} </div>
+                        <div style="font-size: 30px; font-weight: bold; " ><img src="{% static 'clock.png' %}" style=" margin-right: 10px; margin-left: 20px; height: 30px; width: 30px;"/>{% if inprogress.pdConsultation.time > kpi__%}<span style = "color:green;">{% seconds_to_hm inprogress.pdConsultation.time %}</span>{%else%}<span style = "color:red;">{% seconds_to_hm inprogress.pdConsultation.time %}</span> {% endif %}</div>
+                      
+                    </div>
+                    </div>
+    
+    
+                </div>
+    
+                <div class="doctor-stats">
+                    <div class = 'doctor-stats-div1'><img src= "{% static 'pateint.png' %}"/>Doctor Statistics</div>
+    
+                    <table id="docTable" style="table-layout: fixed;">
+                        <thead>
+                            <tr>
+                            <th>Doctor</th>
+                            <th>Patients</th>
+                            <th style="width: 100px;">Time</th>
+                            </tr>
+                         </thead>
+                        <tbody>
+                        {% for v in docstats %}	
+                        <tr>
+                        <td>{{v.doc_name}}</td>
+                        <td>{{v.count}}</td>
+                        <td> <span> <img src="{% static 'clock.png' %}"/></span>{% if v.avg_visit_tm > kpi__ %}<span style = "color:red;">{% seconds_to_hm v.avg_visit_tm  %}</span>{%else%}	<span style = "color:green;">{% seconds_to_hm v.avg_visit_tm  %}</span>{% endif %}</td>
+                        </tr>
+                       {%endfor %}
+                       </tbody>
+      
+                    </table>
+                   
+                </div>   
+    
+    
+
+     
+            </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#docTable').DataTable({
+              "pageLength": 3,
+              "ordering": false,
+              "lengthChange": false,
+              "searching": true,
+              "info": false,
+              
+              language: {
+                paginate: {
+                  previous: `<div id=${"previous"}><</div>`,
+                  next: `<div  id=${"next"}>></div>`
+                }
+              }
+            })
+        });
+        var graphdata = JSON.parse("{{jsondata|escapejs}}");
+        //console.log(graphdata);
+        var moduleName = Object.keys(graphdata);
+        const module = "AccidentEmergency";
+        const moduleKPI = graphdata.graphs[module].KPI;
+        barLineGraph(graphdata.graphs[module].triage['comparison-1'],moduleKPI,"chart-1",["#72C090CF", "#C6F0C2","#999999B2", "#DDDDDD"],"Triage Time By Interval")
+        barLineGraph(graphdata.graphs[module].Zone['barpie-1']['bar'],moduleKPI,"chart-2",['#72C090CF', '#C6F0C2'],"Patients by Zone")
+        barLineGraph(graphdata.graphs[module].interval['barline-1'],moduleKPI,"chart-3",["#676795E5", "#EBEBFF",["Navy-300"]],"Patients By Interval")
+        barLineGraph(graphdata.graphs[module].Doctor['barline-1'],moduleKPI,"chart-4",['#A26985', '#F9F5F7'],"Pateints by Doctor")
+        
+        function barLineGraph(data,kpiValue,chartId,color,title,nullSeries,distributed,trim=false){
+            let x = data.x;
+            let y = data.y;
+            let z = []
+            for (var i = 0; i < y.length; i++) {
+                var series = y[i];
+                
+                if (series.name === "Average Time") {
+                    for (var j = 0; j < series.data.length; j++) {
+                            series.data[j] = (series.data[j]/3600);
+                            //console.log(series.data[j])
+                            series.data[j] = parseFloat(series.data[j].toFixed(2));
+                            //console.log(series.data[j])
+                    }
+                }
+            }
+            //console.log(y[1]['name'])
+            console.log(y)
+            var options = {
+                series: y,
+                colors:color,
+                chart: {
+                height: 250,
+                type: 'line',
+                stacked: false,
+                },
+                stroke: {
+                width: [0, 2, 5],
+                curve: 'smooth'
+                },
+                title: {
+                text: '',
+                align: 'center',
+                offsetX: 110
+            },
+                plotOptions: {
+                bar: {
+                    columnWidth: '50%',
+                    borderRadiusApplication: 'around',
+                    borderRadius: 7,
+                }
+                },
+                
+                fill: {
+                opacity: [0.85, 0.25, 1],
+                gradient: {
+                    inverseColors: false,
+                    shade: 'light',
+                    type: "vertical",
+                    opacityFrom: 0.85,
+                    opacityTo: 1,
+                    stops: [0, 100, 100, 100]
+                }
+                },
+                labels: x,
+                markers: {
+                size: 0
+                },
+                xaxis: {
+                type: 'area'
+                },
+                yaxis: {
+                title: {
+                    text: '',
+                },
+                min: 0
+                },
+                tooltip: {
+                shared: true,
+                intersect: false,
+                followCursor: true,
+                onDatasetHover: {
+                    highlightDataSeries: false,
+                },
+                y: {
+                    formatter: function (y) {
+                    if (typeof y !== "undefined") {
+                        return y.toFixed(0) + " points";
+                    }
+                    return y;
+                
+                    }
+                }
+                }
+                
+        };
+    
+        
+    var chart = new ApexCharts(document.querySelector("#" + chartId), options);
+    chart.render();
+    };
+                    
+    </script>   
+    </body>
+</html>
+
+

@@ -1,12 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponse
-from .models import Inventory
-from .models import Orders
-from .models import Transaction
-from .forms import InventoryForm
-from .forms import SellItemForm
-from .forms import OrdersForm
-from django.shortcuts import render, get_object_or_404, redirect
+from .models import Inventory,Orders,Transaction
+from .forms import InventoryForm,SellItemForm,OrdersForm
+from django.utils import timezone
+#from django.urls import reverse
 # Create your views here.
 
 def index(request):
@@ -39,118 +36,177 @@ def home(request):
     }
 
     return render(request, 'home/index.html', context)    
-    #return render(request,'home/index.html')
 
 def itemList(request):
     items = Inventory.objects.all()
     return render(request, 'itemList/index.html', {'items': items})
-    #return HttpResponse("This is ItemList Screen")
 
 def sellItem(request,item_id):
+    
+    inventory_item = Inventory.objects.get(id=item_id)
+    
     if request.method == 'POST':
         form = SellItemForm(request.POST)
+        
         if form.is_valid():
-            item = form.cleaned_data['item']
             quantity = form.cleaned_data['quantity']
-            selling_price = form.cleaned_data['selling_price']
 
-            try:
-                inventory_item = Inventory.objects.get(id=item.id)
-                if inventory_item.quantity >= quantity:
-                    transaction = form.save(commit=False)
-                    transaction.selling_price = selling_price
-                    transaction.save()
+            if inventory_item.quantity >= quantity:
+                selling_price = inventory_item.cost
+                transaction = form.save(commit=False)
+                transaction.name = inventory_item.name
+                transaction.item = inventory_item
+                transaction.selling_price = selling_price
+                transaction.transactiondttm = timezone.now()
+                transaction.save()
 
-                    # Update Inventory quantities
-                    inventory_item.quantity -= quantity
-                    inventory_item.quantity_sold += quantity
-                    inventory_item.revenue += selling_price * quantity
-                    inventory_item.profit_earned += (selling_price - inventory_item.cost) * quantity
-                    inventory_item.save()
+                # Update Inventory quantities
+                inventory_item.quantity -= quantity
+                inventory_item.quantity_sold += quantity
+                inventory_item.revenue += selling_price * quantity
+                inventory_item.profit_earned += (selling_price - inventory_item.cost) * quantity
+                inventory_item.save()
 
-                    return redirect('itemList')  # Redirect to transaction list
-                else:
-                    form.add_error('quantity', "Insufficient quantity in stock")
-            except Inventory.DoesNotExist:
-                form.add_error('item', "Invalid item selected")
+                return redirect('itemList')  
+            else:
+                form.add_error('quantity', "Insufficient quantity in stock")
     else:
-        form = SellItemForm()
+        initial_data = {
+            'item': inventory_item,
+            'selling_price': inventory_item.cost,  
+        }
+        form = SellItemForm(initial=initial_data)
 
     context = {'form': form}
     return render(request, 'sellItem/mm.html', context)
-
+    
 def createNewItem(request):
-    #form = InventoryForm()
     if request.method == "POST":
         form = InventoryForm(request.POST)
         
         if form.is_valid():
             item = form.save(commit=False)
             if item.quantity >= item.quantity_sold:
-                item.revenue = item.selling_price * item.quantity_sold
-                item.profit_earned = item.revenue - (item.cost * item.quantity_sold)
-                item.save()
-            #form.save()
-                return redirect('itemList')
+                if item.selling_price>= item.cost:
+                    item.revenue = item.selling_price * item.quantity_sold
+                    item.profit_earned =  (item.selling_price - item.cost)* item.quantity_sold
+                    item.save()
+                    return redirect('itemList')
+                else:
+                    return HttpResponse("Selling Price should not be less than Cost Price")
+                    
             else:
                 return HttpResponse("Quantity Sold Cannot be Greater Than Qunatity in Inventory")
     else:
         form = InventoryForm()
     context = {'form':form}
     return render(request,'createNewItem/mm.html',context)
-    #return HttpResponse("This is createNewItem Screen")
 
 def itemDetails(request,item_id):
-    item = Inventory.objects.get(pk=item_id)
-    return render(request,'itemDetails/index.html',{'item':item})
+    item = Inventory.objects.get(id = item_id)
+    context = {'item': item}
+    return render(request,'itemDetails/index.html',context)
 
-def ordersPlaced(request):
-    return HttpResponse("This is ordersPlaced Screen")
+    
+def ordersPlaced(item_id,quantity):
+    order = Orders()
+    item = Inventory.objects.get(id=item_id)
+    order.item = item
+    order.name = item.name
+    order.quantity = quantity
+    order.orderdttm = timezone.now()
+    order.is_received = False
+    order.is_cancel = False
+    order.cost = item.cost * quantity
+    order.save()
+    return order.id
 
-def ordersReceived(request):
-    return HttpResponse("This is ordersReceived Screen")
 
-def ordersCancelled(request):
-    return HttpResponse("This is ordersCancelled Screen")
+def ordersCancelled(request,item_id):
+    orders_cancelled = Orders.objects.filter(item_id=item_id, is_cancel=True)
 
-def itemsSold(request):
-    return HttpResponse("This is itemSold Screen")
+    context = {'orders': orders_cancelled,'context': "Cancelled"}
+    return render(request, 'orders/index.html', context)
+
+def itemsSold(request,item_id):
+    transactions = Transaction.objects.filter(item_id=item_id)
+    context = {'transactions': transactions}
+    return render(request, 'itemsSold/index.html', context)
 
 def editItem(request, item_id):
-    item = get_object_or_404(Inventory, pk=item_id)
+    item = Inventory.objects.get(pk = item_id)
     
     if request.method == 'POST':
         form = InventoryForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
-            return redirect('itemList')  # Redirect to the item list page after editing
+            return redirect('itemList')
     else:
         form = InventoryForm(instance=item)
 
     context = {'form': form, 'item': item}
     return render(request, 'editItem/index.html', context)
-    #return HttpResponse("This is editItem Screen")
     
 def createOrders(request,item_id):
-    moo = get_object_or_404(Inventory, pk=item_id)
     
+    item = Inventory.objects.get(id=item_id)
+
     if request.method == 'POST':
-        form = OrdersForm(request.POST,instance=moo)
-        form.item = moo
+        form = OrdersForm(request.POST)
         if form.is_valid():
-            Orders = form.save(commit=False)
-            if Orders.is_received:
-                Orders.save()  # Save to Orders model
-                item = Orders.item
-                inventory_item = Inventory.objects.get(id=item.id)
-
-                # Update Inventory quantities
-                inventory_item.quantity += Orders.quantity
-                inventory_item.save()
-
-                return redirect('itemList')  # Redirect to order list
+            order = form.save(commit=False)
+            quantity = form.cleaned_data['quantity']
+            order_id = ordersPlaced(item_id,quantity)
+            return redirect('ordersDetails',order_id = order_id)
     else:
-        form = OrdersForm()
+        initial_data = {
+            'item': item,
+            'name': item.name,  # Prepopulate item name
+            'cost': item.cost,  # Prepopulate cost
+        }
+        form = OrdersForm(initial=initial_data)
 
     context = {'form': form}
     return render(request, 'createOrders/index.html', context)
+
+
+    
+def ordersReceived(request, item_id):
+    orders_received = Orders.objects.filter(item_id=item_id, is_received=True)
+
+    context = {'orders': orders_received,'context': "Received"}
+    return render(request, 'orders/index.html', context)
+
+def allOrders(request,item_id):
+    orders = Orders.objects.filter(item_id=item_id)
+
+    context = {'orders': orders,'context': ""}
+    return render(request, 'orders/index.html', context)
+
+
+def transactions(request,item_id):
+    item = Inventory.objects.get(id=item_id)
+    transactions = Transaction.objects.filter(item=item)
+    
+    context = {'transactions': transactions,'item':item}
+    return render(request, 'transactions/index.html', context)
+
+def confirmReceived(request, order_id):
+    order = Orders.objects.get(id = order_id)
+    order.is_received = True
+    order.save()
+    inventory_item = Inventory.objects.get(id=order.item.id)
+    inventory_item.quantity += order.quantity
+    inventory_item.save()
+    return redirect('itemList')
+
+def confirmCanceled(request, order_id):
+    order = Orders.objects.get(id=order_id)
+    order.is_cancel = True
+    order.save()
+    return redirect('itemList')
+
+def ordersDetails(request,order_id):
+    order = Orders.objects.get(id = order_id)
+    context = {'order':order}
+    return render(request, 'ordersPlaced/index.html', context)
